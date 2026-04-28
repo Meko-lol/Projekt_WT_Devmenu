@@ -3,319 +3,202 @@ package cz.Meko.Data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-// This prevents the app from crashing if the JSON payload adds new fields later
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Data {
 
     public static final String[] VARIABLE_NAMES = {
-            "valid", "army", "type", "speed",
-            "pedals", "pedals1", "pedals2", "pedals3", "pedals4", "pedals5",
-            "stickElevator", "stickAilerons", "vario",
-            "altitudeHour", "altitudeMin", "altitude10k", "altitude1Hour", "altitude1Min", "altitude110k",
-            "aviahorizonRoll", "aviahorizonPitch", "aviahorizonRoll1", "aviahorizonPitch1",
-            "bank", "compass", "compass1", "compass2",
-            "clockHour", "clockMin", "clockSec",
-            "rpmMin", "rpmHour", "waterTemperature",
-            "fuel", "fuel1",
-            "airbrakeLever", "gears",
-            "gearLampDown", "gearLampUp", "gearLampOff",
-            "flaps", "flaps1", "trimmer", "throttle",
-            "weapon2", "weapon4",
-            "flapsIndicator", "flapsIndicator1",
-            "mach", "mach1",
-            "gMeter", "gMeterMin", "gMeterMax",
-            "aoa",
-            "blister1", "blister2", "blister3", "blister4", "blister5", "blister11"
+            "Valid", "Army", "Type", "Speed", "RPM",
+            "Gear", "Gear Neutral", "Cruise Control", "Stabilizer",
+            "First Stage Ammo", "Crew Total", "Crew Current", "Crew Distance",
+            "Gunner State", "Driver State", "LWS", "IRCM",
+            "Pedals", "Pedals1", "Pedals2", "Pedals3", "Pedals4", "Pedals5", "Pedals6", "Pedals7",
+            "Stick Elevator", "Stick Ailerons", "Stick Ailerons1", "Vario",
+            "Alt Hour", "Alt Min", "Alt 10k", "Alt1 Hour", "Alt1 Min", "Alt1 10k",
+            "Horizon Roll", "Horizon Pitch", "Horizon Roll1", "Horizon Pitch1",
+            "Bank", "Compass", "Compass1", "Compass2",
+            "Clock Hour", "Clock Min", "Clock Sec",
+            "Water Temp", "Oil Temp", "Fuel", "Fuel1",
+            "Throttle", "Mach", "Mach1", "G Meter", "G Min", "G Max", "AoA",
+            "Airbrake", "Gears Dev", "Flaps", "Flaps1", "Trimmer",
+            "Blister1", "Blister2", "Blister3", "Blister4", "Blister5", "Blister7", "Blister8", "Blister11"
     };
 
     private boolean valid;
     private String army;
     private String type;
     private double speed;
+    private double rpm;
 
+    // --- Tank Specific ---
+    private double gear;
+    @JsonProperty("gear_neutral")
+    private double gearNeutral;
+    @JsonProperty("cruise_control")
+    private double cruiseControl;
+    private double stabilizer;
+    @JsonProperty("first_stage_ammo")
+    private double firstStageAmmo;
+    @JsonProperty("crew_total")
+    private double crewTotal;
+    @JsonProperty("crew_current")
+    private double crewCurrent;
+    @JsonProperty("crew_distance")
+    private double crewDistance;
+    @JsonProperty("gunner_state")
+    private double gunnerState;
+    @JsonProperty("driver_state")
+    private double driverState;
+    private double lws;
+    private double ircm;
+
+    // --- Controls ---
     private double pedals;
     private double pedals1;
     private double pedals2;
     private double pedals3;
     private double pedals4;
     private double pedals5;
+    private double pedals6;
+    private double pedals7;
 
     @JsonProperty("stick_elevator")
     private double stickElevator;
-
     @JsonProperty("stick_ailerons")
     private double stickAilerons;
+    @JsonProperty("stick_ailerons1")
+    private double stickAilerons1;
 
     private double vario;
 
+    // --- Flight Instruments ---
     @JsonProperty("altitude_hour")
     private double altitudeHour;
-
     @JsonProperty("altitude_min")
     private double altitudeMin;
-
     @JsonProperty("altitude_10k")
     private double altitude10k;
-
     @JsonProperty("altitude1_hour")
     private double altitude1Hour;
-
     @JsonProperty("altitude1_min")
     private double altitude1Min;
-
     @JsonProperty("altitude1_10k")
     private double altitude110k;
 
     @JsonProperty("aviahorizon_roll")
     private double aviahorizonRoll;
-
     @JsonProperty("aviahorizon_pitch")
     private double aviahorizonPitch;
-
     @JsonProperty("aviahorizon_roll1")
     private double aviahorizonRoll1;
-
     @JsonProperty("aviahorizon_pitch1")
     private double aviahorizonPitch1;
 
     private double bank;
-
     private double compass;
     private double compass1;
     private double compass2;
 
     @JsonProperty("clock_hour")
     private double clockHour;
-
     @JsonProperty("clock_min")
     private int clockMin;
-
     @JsonProperty("clock_sec")
     private int clockSec;
 
-    @JsonProperty("rpm_min")
-    private int rpmMin;
-
-    @JsonProperty("rpm_hour")
-    private double rpmHour;
-
     @JsonProperty("water_temperature")
     private double waterTemperature;
+    @JsonProperty("oil_temperature")
+    private double oilTemperature;
 
-    private int fuel;
-    private int fuel1;
-
-    @JsonProperty("airbrake_lever")
-    private double airbrakeLever;
-
-    private double gears;
-
-    @JsonProperty("gear_lamp_down")
-    private int gearLampDown;
-
-    @JsonProperty("gear_lamp_up")
-    private int gearLampUp;
-
-    @JsonProperty("gear_lamp_off")
-    private int gearLampOff;
-
-    private double flaps;
-    private double flaps1;
-    private double trimmer;
+    private double fuel;
+    private double fuel1;
     private double throttle;
-
-    private int weapon2;
-    private int weapon4;
-
-    @JsonProperty("flaps_indicator")
-    private double flapsIndicator;
-
-    @JsonProperty("flaps_indicator1")
-    private double flapsIndicator1;
-
     private double mach;
     private double mach1;
 
     @JsonProperty("g_meter")
     private double gMeter;
-
     @JsonProperty("g_meter_min")
     private double gMeterMin;
-
     @JsonProperty("g_meter_max")
     private double gMeterMax;
 
     private double aoa;
 
+    @JsonProperty("airbrake_lever")
+    private double airbrakeLever;
+    private double gears;
+    private double flaps;
+    private double flaps1;
+    private double trimmer;
+
+    // --- Blisters ---
     private double blister1;
     private double blister2;
     private double blister3;
     private double blister4;
     private double blister5;
+    private double blister7;
+    private double blister8;
     private double blister11;
 
-    // --- GETTERS ---
-
-    public boolean isValid() { return valid; }
-    public String getArmy() { return army; }
-    public String getType() { return type; }
-    public double getSpeed() { return speed; }
-
-    public double getPedals() { return pedals; }
-    public double getPedals1() { return pedals1; }
-    public double getPedals2() { return pedals2; }
-    public double getPedals3() { return pedals3; }
-    public double getPedals4() { return pedals4; }
-    public double getPedals5() { return pedals5; }
-
-    public double getStickElevator() { return stickElevator; }
-    public double getStickAilerons() { return stickAilerons; }
-
-    public double getVario() { return vario; }
-
-    public double getAltitudeHour() { return altitudeHour; }
-    public double getAltitudeMin() { return altitudeMin; }
-    public double getAltitude10k() { return altitude10k; }
-    public double getAltitude1Hour() { return altitude1Hour; }
-    public double getAltitude1Min() { return altitude1Min; }
-    public double getAltitude110k() { return altitude110k; }
-
-    public double getAviahorizonRoll() { return aviahorizonRoll; }
-    public double getAviahorizonPitch() { return aviahorizonPitch; }
-    public double getAviahorizonRoll1() { return aviahorizonRoll1; }
-    public double getAviahorizonPitch1() { return aviahorizonPitch1; }
-
-    public double getBank() { return bank; }
-
-    public double getCompass() { return compass; }
-    public double getCompass1() { return compass1; }
-    public double getCompass2() { return compass2; }
-
-    public double getClockHour() { return clockHour; }
-    public int getClockMin() { return clockMin; }
-    public int getClockSec() { return clockSec; }
-
-    public int getRpmMin() { return rpmMin; }
-    public double getRpmHour() { return rpmHour; }
-
-    public double getWaterTemperature() { return waterTemperature; }
-
-    public int getFuel() { return fuel; }
-    public int getFuel1() { return fuel1; }
-
-    public double getAirbrakeLever() { return airbrakeLever; }
-    public double getGears() { return gears; }
-
-    public int getGearLampDown() { return gearLampDown; }
-    public int getGearLampUp() { return gearLampUp; }
-    public int getGearLampOff() { return gearLampOff; }
-
-    public double getFlaps() { return flaps; }
-    public double getFlaps1() { return flaps1; }
-    public double getTrimmer() { return trimmer; }
-    public double getThrottle() { return throttle; }
-
-    public int getWeapon2() { return weapon2; }
-    public int getWeapon4() { return weapon4; }
-
-    public double getFlapsIndicator() { return flapsIndicator; }
-    public double getFlapsIndicator1() { return flapsIndicator1; }
-
-    public double getMach() { return mach; }
-    public double getMach1() { return mach1; }
-
-    public double getgMeter() { return gMeter; }
-    public double getgMeterMin() { return gMeterMin; }
-    public double getgMeterMax() { return gMeterMax; }
-
-    public double getAoa() { return aoa; }
-
-    public double getBlister1() { return blister1; }
-    public double getBlister2() { return blister2; }
-    public double getBlister3() { return blister3; }
-    public double getBlister4() { return blister4; }
-    public double getBlister5() { return blister5; }
-    public double getBlister11() { return blister11; }
+    // --- Logic for UI List ---
 
     public String[] getCurrentValuesAsArray() {
         return new String[]{
-                String.valueOf(this.valid),
-                this.army != null ? this.army : "N/A",
-                this.type != null ? this.type : "N/A",
-                String.valueOf(this.speed),
+                String.valueOf(valid),
+                army != null ? army : "N/A",
+                type != null ? type : "N/A",
+                String.valueOf(speed),
+                String.valueOf(rpm),
 
-                String.valueOf(this.pedals),
-                String.valueOf(this.pedals1),
-                String.valueOf(this.pedals2),
-                String.valueOf(this.pedals3),
-                String.valueOf(this.pedals4),
-                String.valueOf(this.pedals5),
+                // Tank
+                String.valueOf(gear),
+                String.valueOf(gearNeutral),
+                String.valueOf(cruiseControl),
+                String.valueOf(stabilizer),
+                String.valueOf(firstStageAmmo),
+                String.valueOf(crewTotal),
+                String.valueOf(crewCurrent),
+                String.valueOf(crewDistance),
+                String.valueOf(gunnerState),
+                String.valueOf(driverState),
+                String.valueOf(lws),
+                String.valueOf(ircm),
 
-                String.valueOf(this.stickElevator),
-                String.valueOf(this.stickAilerons),
-                String.valueOf(this.vario),
+                // Pedals
+                String.valueOf(pedals), String.valueOf(pedals1), String.valueOf(pedals2),
+                String.valueOf(pedals3), String.valueOf(pedals4), String.valueOf(pedals5),
+                String.valueOf(pedals6), String.valueOf(pedals7),
 
-                String.valueOf(this.altitudeHour),
-                String.valueOf(this.altitudeMin),
-                String.valueOf(this.altitude10k),
-                String.valueOf(this.altitude1Hour),
-                String.valueOf(this.altitude1Min),
-                String.valueOf(this.altitude110k),
+                // Controls
+                String.valueOf(stickElevator), String.valueOf(stickAilerons), String.valueOf(stickAilerons1),
+                String.valueOf(vario),
 
-                String.valueOf(this.aviahorizonRoll),
-                String.valueOf(this.aviahorizonPitch),
-                String.valueOf(this.aviahorizonRoll1),
-                String.valueOf(this.aviahorizonPitch1),
+                // Altitude
+                String.valueOf(altitudeHour), String.valueOf(altitudeMin), String.valueOf(altitude10k),
+                String.valueOf(altitude1Hour), String.valueOf(altitude1Min), String.valueOf(altitude110k),
 
-                String.valueOf(this.bank),
-                String.valueOf(this.compass),
-                String.valueOf(this.compass1),
-                String.valueOf(this.compass2),
+                // Horizon
+                String.valueOf(aviahorizonRoll), String.valueOf(aviahorizonPitch),
+                String.valueOf(aviahorizonRoll1), String.valueOf(aviahorizonPitch1),
 
-                String.valueOf(this.clockHour),
-                String.valueOf(this.clockMin),
-                String.valueOf(this.clockSec),
+                // Navigation & Temp
+                String.valueOf(bank), String.valueOf(compass), String.valueOf(compass1), String.valueOf(compass2),
+                String.valueOf(clockHour), String.valueOf(clockMin), String.valueOf(clockSec),
+                String.valueOf(waterTemperature), String.valueOf(oilTemperature),
+                String.valueOf(fuel), String.valueOf(fuel1),
+                String.valueOf(throttle), String.valueOf(mach), String.valueOf(mach1),
+                String.valueOf(gMeter), String.valueOf(gMeterMin), String.valueOf(gMeterMax), String.valueOf(aoa),
 
-                String.valueOf(this.rpmMin),
-                String.valueOf(this.rpmHour),
-                String.valueOf(this.waterTemperature),
+                // Mechanical
+                String.valueOf(airbrakeLever), String.valueOf(gears), String.valueOf(flaps),
+                String.valueOf(flaps1), String.valueOf(trimmer),
 
-                String.valueOf(this.fuel),
-                String.valueOf(this.fuel1),
-
-                String.valueOf(this.airbrakeLever),
-                String.valueOf(this.gears),
-
-                String.valueOf(this.gearLampDown),
-                String.valueOf(this.gearLampUp),
-                String.valueOf(this.gearLampOff),
-
-                String.valueOf(this.flaps),
-                String.valueOf(this.flaps1),
-                String.valueOf(this.trimmer),
-                String.valueOf(this.throttle),
-
-                String.valueOf(this.weapon2),
-                String.valueOf(this.weapon4),
-
-                String.valueOf(this.flapsIndicator),
-                String.valueOf(this.flapsIndicator1),
-
-                String.valueOf(this.mach),
-                String.valueOf(this.mach1),
-
-                String.valueOf(this.gMeter),
-                String.valueOf(this.gMeterMin),
-                String.valueOf(this.gMeterMax),
-
-                String.valueOf(this.aoa),
-
-                String.valueOf(this.blister1),
-                String.valueOf(this.blister2),
-                String.valueOf(this.blister3),
-                String.valueOf(this.blister4),
-                String.valueOf(this.blister5),
-                String.valueOf(this.blister11)
+                // Blisters
+                String.valueOf(blister1), String.valueOf(blister2), String.valueOf(blister3),
+                String.valueOf(blister4), String.valueOf(blister5), String.valueOf(blister7),
+                String.valueOf(blister8), String.valueOf(blister11)
         };
     }
 }

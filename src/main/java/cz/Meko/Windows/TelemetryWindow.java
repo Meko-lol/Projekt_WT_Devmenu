@@ -1,6 +1,7 @@
 package cz.Meko.Windows;
 
 import cz.Meko.Data.Data;
+import cz.Meko.Data.Telemetry;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,8 +24,10 @@ public class TelemetryWindow {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         JButton startBtn = new JButton("Settings");
         JButton stopBtn = new JButton("Stop");
+        JButton startUBtn = new JButton("Start");
 
         buttonPanel.add(startBtn);
+        buttonPanel.add(startUBtn);
         buttonPanel.add(stopBtn);
 
         // 3. Create the center panel for the side-by-side lists
@@ -58,6 +61,15 @@ public class TelemetryWindow {
         // 4. Assemble everything into the main frame
         this.frame.add(buttonPanel, BorderLayout.NORTH); // Top
         this.frame.add(listsPanel, BorderLayout.CENTER); // Middle
+
+        Timer timer = new Timer(500, e -> {
+            Data freshData = Telemetry.getData();
+            if (freshData != null) {
+                // You must update the Model of the JList
+                valuesList.setListData(freshData.getCurrentValuesAsArray());
+            }
+        });
+        timer.start();
 
         // Finally, make the frame visible
         this.frame.setVisible(true);
