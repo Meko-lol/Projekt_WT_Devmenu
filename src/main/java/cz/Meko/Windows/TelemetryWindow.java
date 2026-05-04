@@ -2,6 +2,7 @@ package cz.Meko.Windows;
 
 import cz.Meko.Data.Data;
 import cz.Meko.Data.Telemetry;
+import cz.Meko.Data.UpdateTelemetry;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,13 +23,26 @@ public class TelemetryWindow {
 
         // 2. Create the top panel for the buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        JButton startBtn = new JButton("Settings");
+        JButton settings = new JButton("Settings");
         JButton stopBtn = new JButton("Stop");
-        JButton startUBtn = new JButton("Start");
+        JButton startBtn = new JButton("Start");
 
+        buttonPanel.add(settings);
         buttonPanel.add(startBtn);
-        buttonPanel.add(startUBtn);
         buttonPanel.add(stopBtn);
+
+        settings.addActionListener(e -> {
+        new TelemetrySettingsWindow().init();
+        });
+
+        stopBtn.addActionListener(e -> {
+            Telemetry.setUpdatingTelemetry(false);
+        });
+
+        startBtn.addActionListener(e -> {
+            UpdateTelemetry updateTelemetry = new UpdateTelemetry();
+            updateTelemetry.start();
+        });
 
         // 3. Create the center panel for the side-by-side lists
         // GridLayout(rows, columns, horizontalGap, verticalGap)
@@ -75,11 +89,8 @@ public class TelemetryWindow {
         this.frame.setVisible(true);
     }
 
-    // Main method to test it out
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            TelemetryWindow window = new TelemetryWindow();
-            window.init();
-        });
+    public boolean isOpen() {
+        // Checks if the frame exists and is currently visible on screen
+        return this.frame != null && this.frame.isVisible();
     }
 }

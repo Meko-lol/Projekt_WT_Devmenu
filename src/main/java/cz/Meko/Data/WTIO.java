@@ -72,7 +72,7 @@ public class WTIO {
 
 
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Data couldnt be loaded");
         }
         return null;
     }
