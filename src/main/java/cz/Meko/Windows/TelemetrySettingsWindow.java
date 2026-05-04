@@ -20,41 +20,46 @@ public class TelemetrySettingsWindow {
 
         JPanel listsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
 
-        // Add a nice border around the lists panel so it doesn't touch the edges
         listsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Sample data arrays
         String[] varNames = Data.VARIABLE_NAMES;
         JCheckBox[] checkBoxes = new JCheckBox[varNames.length];
 
+        JPanel checkBoxPanel = new JPanel();
+        checkBoxPanel.setLayout(new BoxLayout(checkBoxPanel, BoxLayout.Y_AXIS));
+        checkBoxPanel.setBackground(Color.WHITE);
+
         for (int i = 0; i < varNames.length; i++) {
-            JCheckBox checkBox = new JCheckBox(varNames[i]);
+            JCheckBox checkBox = new JCheckBox();
+            checkBox.setBackground(Color.WHITE); // Match panel background
+
+            final int index = i;
+
             checkBox.addActionListener(e -> {
-                System.out.println(" is now: " + checkBox.isSelected());
+                System.out.println(varNames[index] + " is now: " + checkBox.isSelected());
             });
+
             checkBoxes[i] = checkBox;
+
+            checkBox.setSelected(true);
+
+            checkBoxPanel.add(checkBox);
         }
 
-        // Initialize the lists
         JList<String> namesList = new JList<>(varNames);
-        JList<JCheckBox> checkBoxList = new JList<>(checkBoxes);
 
-        // Wrap the lists in JScrollPanes so they become scrollable if data gets too long
         JScrollPane namesScrollPane = new JScrollPane(namesList);
-        JScrollPane checkBoxScrollPane = new JScrollPane(checkBoxList);
+        JScrollPane checkBoxScrollPane = new JScrollPane(checkBoxPanel);
 
-        // Optional: Add titles to the top of the scroll panes
+        checkBoxScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
         namesScrollPane.setBorder(BorderFactory.createTitledBorder("Variables"));
         checkBoxScrollPane.setBorder(BorderFactory.createTitledBorder("Visibility"));
 
-        // Add the scroll panes to our GridLayout panel
         listsPanel.add(namesScrollPane);
         listsPanel.add(checkBoxScrollPane);
 
-
-        // 4. Assemble everything into the main frame
         this.frame.add(listsPanel, BorderLayout.CENTER); // Middle
-
 
         this.frame.setVisible(true);
     }
