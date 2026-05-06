@@ -4,13 +4,15 @@ public class UpdateTelemetry extends Thread {
     @Override
     public void run() {
         // Force the flag to true so the loop actually starts
-        Telemetry.setUpdatingTelemetry(true);
-        while (Telemetry.isUpdatingTelemetry()) {
+        Status.setUpdatingTelemetry(true);
+        while (Status.isUpdatingTelemetry()) {
             WTIO wtio = new WTIO();
-            Data fetchedData = wtio.getTelemetry(); // Fetch once
+            Data fetchedData = wtio.getTelemetry();// Fetch once
+
+            System.out.println(fetchedData);
 
             if (fetchedData != null) {
-                Telemetry.setData(fetchedData);
+                Status.setData(fetchedData);
                 System.out.println("data updated");
             }
 

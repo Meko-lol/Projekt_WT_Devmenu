@@ -1,6 +1,7 @@
 package cz.Meko.Windows;
 
 import cz.Meko.Data.Data;
+import cz.Meko.Data.Status;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,11 +28,11 @@ public class TelemetrySettingsWindow {
 
         JPanel checkBoxPanel = new JPanel();
         checkBoxPanel.setLayout(new BoxLayout(checkBoxPanel, BoxLayout.Y_AXIS));
-        checkBoxPanel.setBackground(Color.LIGHT_GRAY);
+        checkBoxPanel.setBackground(Status.getMiddle());
 
         for (int i = 0; i < varNames.length; i++) {
             JCheckBox checkBox = new JCheckBox();
-            checkBox.setBackground(Color.LIGHT_GRAY); // Match panel background
+            checkBox.setBackground(Status.getMiddle()); // Match panel background
 
             final int index = i;
 
@@ -47,7 +48,7 @@ public class TelemetrySettingsWindow {
         }
 
         JList<String> namesList = new JList<>(varNames);
-        namesList.setBackground(Color.LIGHT_GRAY);
+        namesList.setBackground(Status.getMiddle());
 
         JScrollPane namesScrollPane = new JScrollPane(namesList);
         JScrollPane checkBoxScrollPane = new JScrollPane(checkBoxPanel);
@@ -55,13 +56,13 @@ public class TelemetrySettingsWindow {
         namesScrollPane.setBorder(BorderFactory.createTitledBorder("Variables"));
         checkBoxScrollPane.setBorder(BorderFactory.createTitledBorder("Visibility"));
 
-        namesScrollPane.setBackground(new Color(128, 128, 128));
-        checkBoxScrollPane.setBackground(new Color(128, 128, 128));
+        namesScrollPane.setBackground(Status.getForegroundColor());
+        checkBoxScrollPane.setBackground(Status.getForegroundColor());
 
         listsPanel.add(namesScrollPane);
         listsPanel.add(checkBoxScrollPane);
 
-        listsPanel.setBackground(new Color(60, 60, 60));
+        listsPanel.setBackground(Status.getBackGround());
 
         this.frame.add(listsPanel, BorderLayout.CENTER); // Middle
         this.frame.setVisible(true);

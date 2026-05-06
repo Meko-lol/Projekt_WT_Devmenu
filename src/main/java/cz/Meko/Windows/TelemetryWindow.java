@@ -1,14 +1,18 @@
 package cz.Meko.Windows;
 
 import cz.Meko.Data.Data;
-import cz.Meko.Data.Telemetry;
+import cz.Meko.Data.Status;
 import cz.Meko.Data.UpdateTelemetry;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class TelemetryWindow {
-    private JFrame frame;
+    private final JFrame frame;
 
     public TelemetryWindow() {
         frame = new JFrame("Telemetry Window");
@@ -20,23 +24,66 @@ public class TelemetryWindow {
 
         this.frame.setLayout(new BorderLayout(10, 10));
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+
+        //Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 5));
         JButton settings = new JButton("Settings");
         JButton stopBtn = new JButton("Stop");
         JButton startBtn = new JButton("Start");
+
+        settings.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        settings.setBackground(new Color(245, 245, 245)); // Soft Light Gray
+        settings.setForeground(new Color(50, 50, 50));    // Dark Graphite Text
+        settings.setFocusPainted(false);                 // Removes the ugly inner border
+        settings.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1), // Thin border
+                BorderFactory.createEmptyBorder(4, 10, 4, 10)                // Internal padding
+        ));
+
+        startBtn.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        startBtn.setBackground(new Color(245, 245, 245)); // Soft Light Gray
+        startBtn.setForeground(new Color(50, 50, 50));    // Dark Graphite Text
+        startBtn.setFocusPainted(false);                 // Removes the ugly inner border
+        startBtn.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1), // Thin border
+                BorderFactory.createEmptyBorder(4, 10, 4, 10)                // Internal padding
+        ));
+
+
+        stopBtn.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        stopBtn.setBackground(new Color(245, 245, 245)); // Soft Light Gray
+        stopBtn.setForeground(new Color(50, 50, 50));    // Dark Graphite Text
+        stopBtn.setFocusPainted(false);                 // Removes the ugly inner border
+        stopBtn.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1), // Thin border
+                BorderFactory.createEmptyBorder(4, 10, 4, 10)                // Internal padding
+        ));
+
+
+        // --- 2. Make it Interactive ---
+        settings.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                settings.setBackground(new Color(230, 230, 230)); // Subtle hover
+            }
+
+            public void mouseExited(MouseEvent evt) {
+                settings.setBackground(new Color(245, 245, 245)); // Return to normal
+            }
+
+            public void mousePressed(MouseEvent evt) {
+                settings.setBackground(new Color(210, 210, 210)); // Click feedback
+            }
+        });
 
         buttonPanel.add(settings);
         buttonPanel.add(startBtn);
         buttonPanel.add(stopBtn);
 
-        buttonPanel.setBackground(new Color(60, 60, 60));
+        buttonPanel.setBackground(Status.getBackGround());
 
         settings.addActionListener(e -> {
-        new TelemetrySettingsWindow().init();
+            new TelemetrySettingsWindow().init();
         });
 
         stopBtn.addActionListener(e -> {
-            Telemetry.setUpdatingTelemetry(false);
+            Status.setUpdatingTelemetry(false);
         });
 
         startBtn.addActionListener(e -> {
@@ -44,6 +91,8 @@ public class TelemetryWindow {
             updateTelemetry.start();
         });
 
+
+        //Lists
         JPanel listsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
 
         listsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -55,8 +104,8 @@ public class TelemetryWindow {
         JList<String> namesList = new JList<>(varNames);
         JList<String> valuesList = new JList<>(varValues);
 
-        namesList.setBackground(Color.LIGHT_GRAY);
-        valuesList.setBackground(Color.LIGHT_GRAY);
+        namesList.setBackground(Status.getMiddle());
+        valuesList.setBackground(Status.getMiddle());
 
         JScrollPane namesScrollPane = new JScrollPane(namesList);
         JScrollPane valuesScrollPane = new JScrollPane(valuesList);
@@ -65,8 +114,8 @@ public class TelemetryWindow {
         valuesScrollPane.setBorder(BorderFactory.createTitledBorder("Values"));
 
 
-        namesScrollPane.setBackground(new Color(128, 128, 128));
-        valuesScrollPane.setBackground(new Color(128, 128, 128));
+        namesScrollPane.setBackground(Status.getForegroundColor());
+        valuesScrollPane.setBackground(Status.getForegroundColor());
 
 
         listsPanel.add(namesScrollPane);
@@ -75,10 +124,10 @@ public class TelemetryWindow {
         this.frame.add(buttonPanel, BorderLayout.NORTH);
         this.frame.add(listsPanel, BorderLayout.CENTER);
 
-        listsPanel.setBackground(new Color(60, 60, 60));
+        listsPanel.setBackground(Status.getBackGround());
 
         Timer timer = new Timer(500, e -> {
-            Data freshData = Telemetry.getData();
+            Data freshData = Status.getData();
             if (freshData != null) {
                 valuesList.setListData(freshData.getCurrentValuesAsArray());
             }

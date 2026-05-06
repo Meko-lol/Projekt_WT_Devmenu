@@ -2,24 +2,51 @@ package cz.Meko.Data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class Data {
 
     public static final String[] VARIABLE_NAMES = {
-            "Valid", "Army", "Type", "Speed", "RPM",
+            "Valid", "Army", "Type", "Speed", "RPM Min", "RPM Hour",
+
+            // Tank Specific
             "Gear", "Gear Neutral", "Cruise Control", "Stabilizer",
             "First Stage Ammo", "Crew Total", "Crew Current", "Crew Distance",
             "Gunner State", "Driver State", "LWS", "IRCM",
+
+            // Pedals
             "Pedals", "Pedals1", "Pedals2", "Pedals3", "Pedals4", "Pedals5", "Pedals6", "Pedals7",
+
+            // Stick & Vario
             "Stick Elevator", "Stick Ailerons", "Stick Ailerons1", "Vario",
+
+            // Altitude
             "Alt Hour", "Alt Min", "Alt 10k", "Alt1 Hour", "Alt1 Min", "Alt1 10k",
+
+            // Horizon
             "Horizon Roll", "Horizon Pitch", "Horizon Roll1", "Horizon Pitch1",
+
+            // Navigation & Time
             "Bank", "Compass", "Compass1", "Compass2",
             "Clock Hour", "Clock Min", "Clock Sec",
+
+            // Engines & Temps
             "Water Temp", "Oil Temp", "Fuel", "Fuel1",
-            "Throttle", "Mach", "Mach1", "G Meter", "G Min", "G Max", "AoA",
-            "Airbrake", "Gears Dev", "Flaps", "Flaps1", "Trimmer",
+            "Throttle", "Mach", "Mach1",
+
+            // G-Meter & AoA
+            "G Meter", "G Min", "G Max", "AoA",
+
+            // Mechanical & Surfaces
+            "Airbrake", "Gears Dev", "Gear Lamp Down", "Gear Lamp Up", "Gear Lamp Off",
+            "Flaps", "Flaps1", "Flaps Ind", "Flaps Ind1", "Trimmer",
+
+            // Weapons
+            "Weapon2", "Weapon4",
+
+            // Blisters
             "Blister1", "Blister2", "Blister3", "Blister4", "Blister5", "Blister7", "Blister8", "Blister11"
     };
 
@@ -27,7 +54,11 @@ public class Data {
     private String army;
     private String type;
     private double speed;
-    private double rpm;
+
+    @JsonProperty("rpm_min")
+    private double rpmMin;
+    @JsonProperty("rpm_hour")
+    private double rpmHour;
 
     // --- Tank Specific ---
     private double gear;
@@ -125,12 +156,31 @@ public class Data {
 
     private double aoa;
 
+    // --- Mechanical & Flaps ---
     @JsonProperty("airbrake_lever")
     private double airbrakeLever;
     private double gears;
+
+    @JsonProperty("gear_lamp_down")
+    private double gearLampDown;
+    @JsonProperty("gear_lamp_up")
+    private double gearLampUp;
+    @JsonProperty("gear_lamp_off")
+    private double gearLampOff;
+
     private double flaps;
     private double flaps1;
+
+    @JsonProperty("flaps_indicator")
+    private double flapsIndicator;
+    @JsonProperty("flaps_indicator1")
+    private double flapsIndicator1;
+
     private double trimmer;
+
+    // --- Weapons ---
+    private double weapon2;
+    private double weapon4;
 
     // --- Blisters ---
     private double blister1;
@@ -142,7 +192,90 @@ public class Data {
     private double blister8;
     private double blister11;
 
-    // --- Logic for UI List ---
+
+    @Override
+    public String toString() {
+        return "Data{" +
+                "valid=" + valid +
+                ", army='" + army + '\'' +
+                ", type='" + type + '\'' +
+                ", speed=" + speed +
+                ", rpmMin=" + rpmMin +
+                ", rpmHour=" + rpmHour +
+                ", gear=" + gear +
+                ", gearNeutral=" + gearNeutral +
+                ", cruiseControl=" + cruiseControl +
+                ", stabilizer=" + stabilizer +
+                ", firstStageAmmo=" + firstStageAmmo +
+                ", crewTotal=" + crewTotal +
+                ", crewCurrent=" + crewCurrent +
+                ", crewDistance=" + crewDistance +
+                ", gunnerState=" + gunnerState +
+                ", driverState=" + driverState +
+                ", lws=" + lws +
+                ", ircm=" + ircm +
+                ", pedals=" + pedals +
+                ", pedals1=" + pedals1 +
+                ", pedals2=" + pedals2 +
+                ", pedals3=" + pedals3 +
+                ", pedals4=" + pedals4 +
+                ", pedals5=" + pedals5 +
+                ", pedals6=" + pedals6 +
+                ", pedals7=" + pedals7 +
+                ", stickElevator=" + stickElevator +
+                ", stickAilerons=" + stickAilerons +
+                ", stickAilerons1=" + stickAilerons1 +
+                ", vario=" + vario +
+                ", altitudeHour=" + altitudeHour +
+                ", altitudeMin=" + altitudeMin +
+                ", altitude10k=" + altitude10k +
+                ", altitude1Hour=" + altitude1Hour +
+                ", altitude1Min=" + altitude1Min +
+                ", altitude110k=" + altitude110k +
+                ", aviahorizonRoll=" + aviahorizonRoll +
+                ", aviahorizonPitch=" + aviahorizonPitch +
+                ", aviahorizonRoll1=" + aviahorizonRoll1 +
+                ", aviahorizonPitch1=" + aviahorizonPitch1 +
+                ", bank=" + bank +
+                ", compass=" + compass +
+                ", compass1=" + compass1 +
+                ", compass2=" + compass2 +
+                ", clockHour=" + clockHour +
+                ", clockMin=" + clockMin +
+                ", clockSec=" + clockSec +
+                ", waterTemperature=" + waterTemperature +
+                ", oilTemperature=" + oilTemperature +
+                ", fuel=" + fuel +
+                ", fuel1=" + fuel1 +
+                ", throttle=" + throttle +
+                ", mach=" + mach +
+                ", mach1=" + mach1 +
+                ", gMeter=" + gMeter +
+                ", gMeterMin=" + gMeterMin +
+                ", gMeterMax=" + gMeterMax +
+                ", aoa=" + aoa +
+                ", airbrakeLever=" + airbrakeLever +
+                ", gears=" + gears +
+                ", gearLampDown=" + gearLampDown +
+                ", gearLampUp=" + gearLampUp +
+                ", gearLampOff=" + gearLampOff +
+                ", flaps=" + flaps +
+                ", flaps1=" + flaps1 +
+                ", flapsIndicator=" + flapsIndicator +
+                ", flapsIndicator1=" + flapsIndicator1 +
+                ", trimmer=" + trimmer +
+                ", weapon2=" + weapon2 +
+                ", weapon4=" + weapon4 +
+                ", blister1=" + blister1 +
+                ", blister2=" + blister2 +
+                ", blister3=" + blister3 +
+                ", blister4=" + blister4 +
+                ", blister5=" + blister5 +
+                ", blister7=" + blister7 +
+                ", blister8=" + blister8 +
+                ", blister11=" + blister11 +
+                '}';
+    }
 
     public String[] getCurrentValuesAsArray() {
         return new String[]{
@@ -150,21 +283,14 @@ public class Data {
                 army != null ? army : "N/A",
                 type != null ? type : "N/A",
                 String.valueOf(speed),
-                String.valueOf(rpm),
+                String.valueOf(rpmMin),
+                String.valueOf(rpmHour),
 
                 // Tank
-                String.valueOf(gear),
-                String.valueOf(gearNeutral),
-                String.valueOf(cruiseControl),
-                String.valueOf(stabilizer),
-                String.valueOf(firstStageAmmo),
-                String.valueOf(crewTotal),
-                String.valueOf(crewCurrent),
-                String.valueOf(crewDistance),
-                String.valueOf(gunnerState),
-                String.valueOf(driverState),
-                String.valueOf(lws),
-                String.valueOf(ircm),
+                String.valueOf(gear), String.valueOf(gearNeutral), String.valueOf(cruiseControl),
+                String.valueOf(stabilizer), String.valueOf(firstStageAmmo), String.valueOf(crewTotal),
+                String.valueOf(crewCurrent), String.valueOf(crewDistance), String.valueOf(gunnerState),
+                String.valueOf(driverState), String.valueOf(lws), String.valueOf(ircm),
 
                 // Pedals
                 String.valueOf(pedals), String.valueOf(pedals1), String.valueOf(pedals2),
@@ -183,17 +309,26 @@ public class Data {
                 String.valueOf(aviahorizonRoll), String.valueOf(aviahorizonPitch),
                 String.valueOf(aviahorizonRoll1), String.valueOf(aviahorizonPitch1),
 
-                // Navigation & Temp
+                // Navigation & Time
                 String.valueOf(bank), String.valueOf(compass), String.valueOf(compass1), String.valueOf(compass2),
                 String.valueOf(clockHour), String.valueOf(clockMin), String.valueOf(clockSec),
+
+                // Engines & Temps
                 String.valueOf(waterTemperature), String.valueOf(oilTemperature),
                 String.valueOf(fuel), String.valueOf(fuel1),
                 String.valueOf(throttle), String.valueOf(mach), String.valueOf(mach1),
+
+                // G-Meter & AoA
                 String.valueOf(gMeter), String.valueOf(gMeterMin), String.valueOf(gMeterMax), String.valueOf(aoa),
 
                 // Mechanical
-                String.valueOf(airbrakeLever), String.valueOf(gears), String.valueOf(flaps),
-                String.valueOf(flaps1), String.valueOf(trimmer),
+                String.valueOf(airbrakeLever), String.valueOf(gears),
+                String.valueOf(gearLampDown), String.valueOf(gearLampUp), String.valueOf(gearLampOff),
+                String.valueOf(flaps), String.valueOf(flaps1),
+                String.valueOf(flapsIndicator), String.valueOf(flapsIndicator1), String.valueOf(trimmer),
+
+                // Weapons
+                String.valueOf(weapon2), String.valueOf(weapon4),
 
                 // Blisters
                 String.valueOf(blister1), String.valueOf(blister2), String.valueOf(blister3),
