@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class TelemetrySettingsWindow {
-    private JFrame frame;
+    private final JFrame frame;
 
     public TelemetrySettingsWindow() {
         frame = new JFrame("Telemetry settings window");
@@ -27,11 +27,11 @@ public class TelemetrySettingsWindow {
 
         JPanel checkBoxPanel = new JPanel();
         checkBoxPanel.setLayout(new BoxLayout(checkBoxPanel, BoxLayout.Y_AXIS));
-        checkBoxPanel.setBackground(Color.WHITE);
+        checkBoxPanel.setBackground(Color.LIGHT_GRAY);
 
         for (int i = 0; i < varNames.length; i++) {
             JCheckBox checkBox = new JCheckBox();
-            checkBox.setBackground(Color.WHITE); // Match panel background
+            checkBox.setBackground(Color.LIGHT_GRAY); // Match panel background
 
             final int index = i;
 
@@ -47,20 +47,23 @@ public class TelemetrySettingsWindow {
         }
 
         JList<String> namesList = new JList<>(varNames);
+        namesList.setBackground(Color.LIGHT_GRAY);
 
         JScrollPane namesScrollPane = new JScrollPane(namesList);
         JScrollPane checkBoxScrollPane = new JScrollPane(checkBoxPanel);
 
-        checkBoxScrollPane.getVerticalScrollBar().setUnitIncrement(16);
-
         namesScrollPane.setBorder(BorderFactory.createTitledBorder("Variables"));
         checkBoxScrollPane.setBorder(BorderFactory.createTitledBorder("Visibility"));
+
+        namesScrollPane.setBackground(new Color(128, 128, 128));
+        checkBoxScrollPane.setBackground(new Color(128, 128, 128));
 
         listsPanel.add(namesScrollPane);
         listsPanel.add(checkBoxScrollPane);
 
-        this.frame.add(listsPanel, BorderLayout.CENTER); // Middle
+        listsPanel.setBackground(new Color(60, 60, 60));
 
+        this.frame.add(listsPanel, BorderLayout.CENTER); // Middle
         this.frame.setVisible(true);
     }
 }
