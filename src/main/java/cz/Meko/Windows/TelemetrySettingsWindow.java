@@ -2,7 +2,6 @@ package cz.Meko.Windows;
 
 import cz.Meko.Data.Data;
 import cz.Meko.Data.Status;
-import cz.Meko.Data.UpdateTelemetry;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +19,9 @@ public class TelemetrySettingsWindow {
 
         this.frame.setLayout(new BorderLayout(10, 10));
 
-        JPanel listsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        int rowHeight = 20;
+
+        JPanel listsPanel = new JPanel(new GridLayout(1, 2, 0, 0));
 
         listsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -33,12 +34,16 @@ public class TelemetrySettingsWindow {
 
         for (int i = 0; i < varNames.length; i++) {
             JCheckBox checkBox = new JCheckBox();
-            checkBox.setBackground(Status.getMiddle()); // Match panel background
+            checkBox.setBackground(Status.getMiddle());
+
+            checkBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, rowHeight));
+            checkBox.setPreferredSize(new Dimension(checkBox.getPreferredSize().width, rowHeight));
 
             final int index = i;
 
             checkBox.addActionListener(e -> {
-                System.out.println(varNames[index] + " is now: " + checkBox.isSelected());
+                Status.setToIndex(index, checkBox.isSelected());
+                System.out.println(varNames[index] + " visibility set to: " + checkBox.isSelected());
             });
 
             checkBoxes[i] = checkBox;
@@ -50,12 +55,15 @@ public class TelemetrySettingsWindow {
 
         JList<String> namesList = new JList<>(varNames);
         namesList.setBackground(Status.getMiddle());
+        namesList.setFixedCellHeight(rowHeight);
 
         JScrollPane namesScrollPane = new JScrollPane(namesList);
         JScrollPane checkBoxScrollPane = new JScrollPane(checkBoxPanel);
 
         BoundedRangeModel model = namesScrollPane.getVerticalScrollBar().getModel();
         checkBoxScrollPane.getVerticalScrollBar().setModel(model);
+
+        namesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
         namesScrollPane.setBorder(BorderFactory.createTitledBorder("Variables"));
         checkBoxScrollPane.setBorder(BorderFactory.createTitledBorder("Visibility"));

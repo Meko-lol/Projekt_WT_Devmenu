@@ -98,7 +98,23 @@ public class TelemetryWindow {
         Timer timer = new Timer(500, e -> {
             Data freshData = Status.getData();
             if (freshData != null) {
-                valuesList.setListData(freshData.getCurrentValuesAsArray());
+                String[] allNames = Data.VARIABLE_NAMES;
+                String[] allValues = freshData.getCurrentValuesAsArray();
+
+                java.util.List<String> visibleNames = new java.util.ArrayList<>();
+                java.util.List<String> visibleValues = new java.util.ArrayList<>();
+
+                for (int i = 0; i < allNames.length; i++) {
+                    System.out.println(Status.getFromIndex(i));
+                    if (Status.getFromIndex(i)) {
+                        visibleNames.add(allNames[i]);
+                        visibleValues.add(allValues[i]);
+                    }
+                }
+
+                // Push the filtered arrays to the UI components
+                namesList.setListData(visibleNames.toArray(new String[0]));
+                valuesList.setListData(visibleValues.toArray(new String[0]));
             }
         });
         timer.start();

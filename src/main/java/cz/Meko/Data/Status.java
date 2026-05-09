@@ -1,15 +1,15 @@
 package cz.Meko.Data;
 
 import cz.Meko.Windows.MainWindow;
-import cz.Meko.Windows.TelemetryWindow;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Status {
+    private static final MainWindow mainWindow = new MainWindow();
     private static boolean updatingTelemetry = false;
     private static Data data = new Data();
-    private static final MainWindow mainWindow = new MainWindow();
+    private static boolean[] rowVisibility = new boolean[Data.VARIABLE_NAMES.length];
 
     //Colors
     private static Color foregroundColor = new Color(128, 128, 128);
@@ -44,32 +44,16 @@ public class Status {
         return foregroundColor;
     }
 
-    public static void setForegroundColor(Color foregroundColor) {
-        Status.foregroundColor = foregroundColor;
-    }
-
     public static Color getMiddle() {
         return middle;
-    }
-
-    public static void setMiddle(Color middle) {
-        Status.middle = middle;
     }
 
     public static Color getBackGround() {
         return backGround;
     }
 
-    public static void setBackGround(Color backGround) {
-        Status.backGround = backGround;
-    }
-
     public static String getFont() {
         return font;
-    }
-
-    public static void setFont(String font) {
-        Status.font = font;
     }
 
     public static void configureButton(JButton button, int size) {
@@ -79,5 +63,14 @@ public class Status {
         button.setFocusPainted(false);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(0, 0, 0), 5), BorderFactory.createEmptyBorder(4, 10, 4, 10)));
+    }
+
+    public static boolean getFromIndex (int index) {
+        return rowVisibility[index];
+    }
+
+
+    public static void setToIndex (int index, boolean value) {
+        rowVisibility[index] = value;
     }
 }
