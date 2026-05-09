@@ -31,46 +31,9 @@ public class TelemetryWindow {
         JButton stopBtn = new JButton("Stop");
         JButton startBtn = new JButton("Start");
 
-        settings.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        settings.setBackground(new Color(245, 245, 245)); // Soft Light Gray
-        settings.setForeground(new Color(50, 50, 50));    // Dark Graphite Text
-        settings.setFocusPainted(false);                 // Removes the ugly inner border
-        settings.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1), // Thin border
-                BorderFactory.createEmptyBorder(4, 10, 4, 10)                // Internal padding
-        ));
-
-        startBtn.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        startBtn.setBackground(new Color(245, 245, 245)); // Soft Light Gray
-        startBtn.setForeground(new Color(50, 50, 50));    // Dark Graphite Text
-        startBtn.setFocusPainted(false);                 // Removes the ugly inner border
-        startBtn.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1), // Thin border
-                BorderFactory.createEmptyBorder(4, 10, 4, 10)                // Internal padding
-        ));
-
-
-        stopBtn.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        stopBtn.setBackground(new Color(245, 245, 245)); // Soft Light Gray
-        stopBtn.setForeground(new Color(50, 50, 50));    // Dark Graphite Text
-        stopBtn.setFocusPainted(false);                 // Removes the ugly inner border
-        stopBtn.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1), // Thin border
-                BorderFactory.createEmptyBorder(4, 10, 4, 10)                // Internal padding
-        ));
-
-
-        // --- 2. Make it Interactive ---
-        settings.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent evt) {
-                settings.setBackground(new Color(230, 230, 230)); // Subtle hover
-            }
-
-            public void mouseExited(MouseEvent evt) {
-                settings.setBackground(new Color(245, 245, 245)); // Return to normal
-            }
-
-            public void mousePressed(MouseEvent evt) {
-                settings.setBackground(new Color(210, 210, 210)); // Click feedback
-            }
-        });
+        Status.configureButton(settings, 20);
+        Status.configureButton(stopBtn, 20);
+        Status.configureButton(startBtn, 20);
 
         buttonPanel.add(settings);
         buttonPanel.add(startBtn);
@@ -93,7 +56,7 @@ public class TelemetryWindow {
 
 
         //Lists
-        JPanel listsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        JPanel listsPanel = new JPanel(new GridLayout(1, 2, 0, 0));
 
         listsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -109,6 +72,12 @@ public class TelemetryWindow {
 
         JScrollPane namesScrollPane = new JScrollPane(namesList);
         JScrollPane valuesScrollPane = new JScrollPane(valuesList);
+
+
+        BoundedRangeModel model = namesScrollPane.getVerticalScrollBar().getModel();
+        valuesScrollPane.getVerticalScrollBar().setModel(model);
+
+        namesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
         namesScrollPane.setBorder(BorderFactory.createTitledBorder("Variables"));
         valuesScrollPane.setBorder(BorderFactory.createTitledBorder("Values"));
@@ -134,10 +103,8 @@ public class TelemetryWindow {
         });
         timer.start();
 
-        this.frame.setVisible(true);
-    }
+        this.frame.getContentPane().setBackground(Status.getBackGround());
 
-    public boolean isOpen() {
-        return this.frame != null && this.frame.isVisible();
+        this.frame.setVisible(true);
     }
 }

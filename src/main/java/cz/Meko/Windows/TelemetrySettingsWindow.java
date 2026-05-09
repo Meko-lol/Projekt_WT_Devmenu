@@ -2,6 +2,7 @@ package cz.Meko.Windows;
 
 import cz.Meko.Data.Data;
 import cz.Meko.Data.Status;
+import cz.Meko.Data.UpdateTelemetry;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,6 +53,9 @@ public class TelemetrySettingsWindow {
 
         JScrollPane namesScrollPane = new JScrollPane(namesList);
         JScrollPane checkBoxScrollPane = new JScrollPane(checkBoxPanel);
+
+        BoundedRangeModel model = namesScrollPane.getVerticalScrollBar().getModel();
+        checkBoxScrollPane.getVerticalScrollBar().setModel(model);
 
         namesScrollPane.setBorder(BorderFactory.createTitledBorder("Variables"));
         checkBoxScrollPane.setBorder(BorderFactory.createTitledBorder("Visibility"));
