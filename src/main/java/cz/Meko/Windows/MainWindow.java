@@ -36,7 +36,7 @@ public class MainWindow {
         Status.configureButton(setVariablesButton, 40);
 
         setVariablesButton.addActionListener(e -> {
-            new TelemetryWindow().init();
+            new SetVariablesWindow().init();
         });
 
 
