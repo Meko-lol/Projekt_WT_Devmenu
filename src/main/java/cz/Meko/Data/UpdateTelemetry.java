@@ -9,8 +9,6 @@ public class UpdateTelemetry extends Thread {
             WTIO wtio = new WTIO();
             Data fetchedData = wtio.getTelemetry();// Fetch once
 
-            System.out.println(fetchedData);
-
             if (fetchedData != null) {
                 Status.setData(fetchedData);
                 System.out.println("data updated");

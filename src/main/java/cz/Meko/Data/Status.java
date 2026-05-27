@@ -19,24 +19,24 @@ public class Status {
     @Getter @Setter
     private static Data data = new Data();
 
-    private static boolean[] rowVisibility = new boolean[Data.VARIABLE_NAMES.length];
+    private static final boolean[] rowVisibility = new boolean[Data.VARIABLE_NAMES.length];
 
     //Colors
     @Getter
-    private static Color foregroundColor = new Color(128, 128, 128);
+    private static final Color foregroundColor = new Color(128, 128, 128);
 
     @Getter
-    private static Color middle = new Color(200, 200, 200);
+    private static final Color middle = new Color(200, 200, 200);
 
     @Getter
-    private static Color backGround = new Color(60, 60, 60);
+    private static final Color backGround = new Color(60, 60, 60);
 
     //Roundness
-    private static int roundness = 30;
+    private static final int roundness = 30;
 
     //font
     @Getter
-    private static String font = "Segoe UI";
+    private static final String font = "Segoe UI";
 
 
     public static void openWindow() {
@@ -135,7 +135,6 @@ public class Status {
      */
     public static javax.swing.border.Border createRoundedTitledBorder(String title) {
         return new javax.swing.border.AbstractBorder() {
-            private final int radius = 15; // How rounded the border corners are
             private final Insets insets = new Insets(25, 15, 15, 15); // Padding inside the border
 
             @Override
@@ -151,6 +150,8 @@ public class Status {
                 // 1. Draw the rounded border line (Using the foreground gray)
                 g2.setColor(Status.getForegroundColor());
                 g2.setStroke(new BasicStroke(2f)); // Slightly thicker modern line
+                // How rounded the border corners are
+                int radius = 15;
                 g2.drawRoundRect(x + 1, y + 10, width - 3, height - 12, radius, radius);
 
                 // 2. Erase the line behind the text so it looks seamless
@@ -184,8 +185,6 @@ public class Status {
      * Custom UI class that hides default buttons and paints rounded thumbs.
      */
     private static class ModernScrollBarUI extends BasicScrollBarUI {
-        private final int ARC_SIZE = 10; // Controls how rounded the corners are
-        private final int PADDING = 2; // Padding between the thumb and the track edge
 
         // Hide the down/right arrow button
         @Override
@@ -240,6 +239,10 @@ public class Status {
             }
 
             // Draw the rounded rectangle
+            // Padding between the thumb and the track edge
+            int PADDING = 2;
+            // Controls how rounded the corners are
+            int ARC_SIZE = 10;
             g2.fillRoundRect(
                     thumbBounds.x + PADDING,
                     thumbBounds.y + PADDING,
@@ -251,5 +254,70 @@ public class Status {
 
             g2.dispose();
         }
+
+
+    }
+    public static void configureList(JList<?> list, int rowHeight) {
+        // 1. True "Light Gray" background
+        list.setBackground(new Color(174, 174, 174));
+        list.setForeground(Color.BLACK);
+        list.setFont(new Font(Status.getFont(), Font.BOLD, 12));
+        list.setFixedCellHeight(rowHeight);
+
+        // 2. A slightly darker gray for the selection highlight to create contrast
+        list.setSelectionBackground(new Color(125, 125, 125));
+        list.setSelectionForeground(Color.BLACK);
+
+        // 3. Smooth UI override
+        list.setUI(new javax.swing.plaf.basic.BasicListUI() {
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                super.paint(g2, c);
+                g2.dispose();
+            }
+        });
+
+        // 4. Custom Renderer to draw ROUNDED selection highlights!
+        list.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+                // Add padding so text doesn't hug the edges
+                setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+
+                // Prevent Java from painting its default sharp rectangular background
+                setOpaque(false);
+
+                // Apply correct colors based on selection
+                if (isSelected) {
+                    setForeground(list.getSelectionForeground());
+                    setBackground(list.getSelectionBackground());
+                } else {
+                    setForeground(list.getForeground());
+                    setBackground(list.getBackground());
+                }
+
+                return this;
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2.setColor(getBackground());
+
+                // Draw a sleek, rounded background for the row!
+                g2.fillRoundRect(2, 2, getWidth() - 4, getHeight() - 4, 15, 15);
+
+                g2.dispose();
+
+                // Paint the text on top of our new rounded background
+                super.paintComponent(g);
+            }
+        });
     }
 }

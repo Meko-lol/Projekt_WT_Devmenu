@@ -20,7 +20,6 @@ public class TelemetryWindow {
 
         this.frame.setLayout(new BorderLayout(10, 10));
 
-
         //Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 5));
         JButton settings = new JButton("Settings");
@@ -37,46 +36,22 @@ public class TelemetryWindow {
 
         buttonPanel.setBackground(Status.getBackGround());
 
-        //Lists
-        JPanel listsPanel = new JPanel(new GridLayout(1, 2, 0, 0));
-
+        //Lists - Added 10px horizontal gap so the rounded borders don't overlap
+        JPanel listsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         listsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         String[] varNames = Data.VARIABLE_NAMES;
         Data data = new Data();
         String[] varValues = data.getCurrentValuesAsArray();
 
+        int rowHeight = 25; // Defined a standard row height for the lists
+
         JList<String> namesList = new JList<>(varNames);
         JList<String> valuesList = new JList<>(varValues);
 
-        namesList.setBackground(Status.getMiddle());
-        valuesList.setBackground(Status.getMiddle());
-
-        namesList.setUI(new javax.swing.plaf.basic.BasicListUI() {
-            @Override
-            public void paint(Graphics g, JComponent c) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                g2.setColor(c.getBackground());
-
-                super.paint(g2, c); // Paint the text over our custom background
-                g2.dispose();
-            }
-        });
-
-        valuesList.setUI(new javax.swing.plaf.basic.BasicListUI() {
-            @Override
-            public void paint(Graphics g, JComponent c) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                g2.setColor(c.getBackground());
-
-                super.paint(g2, c); // Paint the text over our custom background
-                g2.dispose();
-            }
-        });
+        // 1. Replaced the giant BasicListUI blocks with your new centralized method!
+        Status.configureList(namesList, rowHeight);
+        Status.configureList(valuesList, rowHeight);
 
         JScrollPane namesScrollPane = new JScrollPane(namesList);
         JScrollPane valuesScrollPane = new JScrollPane(valuesList);
@@ -91,7 +66,6 @@ public class TelemetryWindow {
                 java.util.List<String> visibleValues = new java.util.ArrayList<>();
 
                 for (int i = 0; i < allNames.length; i++) {
-                    System.out.println(Status.getFromIndex(i));
                     if (Status.getFromIndex(i)) {
                         visibleNames.add(allNames[i]);
                         visibleValues.add(allValues[i]);
@@ -119,45 +93,24 @@ public class TelemetryWindow {
             timer.stop();
         });
 
-
         BoundedRangeModel model = namesScrollPane.getVerticalScrollBar().getModel();
         valuesScrollPane.getVerticalScrollBar().setModel(model);
 
         namesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
-        namesScrollPane.setBorder(BorderFactory.createTitledBorder("Variables"));
-        valuesScrollPane.setBorder(BorderFactory.createTitledBorder("Values"));
+        // 2. Apply base scrollbar UI configuration
+        Status.configureJScrollPane(namesScrollPane);
+        Status.configureJScrollPane(valuesScrollPane);
 
+        // 3. Make transparent so rounded borders show correctly
+        namesScrollPane.setOpaque(false);
+        namesScrollPane.getViewport().setOpaque(false);
+        valuesScrollPane.setOpaque(false);
+        valuesScrollPane.getViewport().setOpaque(false);
 
-        namesScrollPane.setBackground(Status.getForegroundColor());
-        valuesScrollPane.setBackground(Status.getForegroundColor());
-
-        namesScrollPane.setUI(new javax.swing.plaf.basic.BasicScrollPaneUI() {
-            @Override
-            public void paint(Graphics g, JComponent c) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                g2.setColor(c.getBackground());
-
-                super.paint(g2, c); // Paint the text over our custom background
-                g2.dispose();
-            }
-        });
-
-        valuesScrollPane.setUI(new javax.swing.plaf.basic.BasicScrollPaneUI() {
-            @Override
-            public void paint(Graphics g, JComponent c) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                g2.setColor(c.getBackground());
-
-                super.paint(g2, c); // Paint the text over our custom background
-                g2.dispose();
-            }
-        });
-
+        // 4. Apply custom rounded borders
+        namesScrollPane.setBorder(Status.createRoundedTitledBorder("Variables"));
+        valuesScrollPane.setBorder(Status.createRoundedTitledBorder("Values"));
 
         listsPanel.add(namesScrollPane);
         listsPanel.add(valuesScrollPane);
@@ -166,7 +119,6 @@ public class TelemetryWindow {
         this.frame.add(listsPanel, BorderLayout.CENTER);
 
         listsPanel.setBackground(Status.getBackGround());
-
 
         this.frame.getContentPane().setBackground(Status.getBackGround());
         this.frame.setVisible(true);

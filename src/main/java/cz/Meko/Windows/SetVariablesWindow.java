@@ -27,9 +27,9 @@ public class SetVariablesWindow {
 
         String[] setableVariableNames = getVariableNames();
 
+        // --- Apply the new centralized list configuration! ---
         JList<String> variables = new JList<>(setableVariableNames);
-        variables.setBackground(Status.getMiddle());
-        variables.setFixedCellHeight(rowHeight);
+        Status.configureList(variables, rowHeight);
 
         // --- Text Field Panel ---
         JTextField[] textFieldsArray = new JTextField[setableVariableNames.length];

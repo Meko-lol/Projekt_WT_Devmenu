@@ -20,6 +20,9 @@ public class MainWindow {
 
 
         JLabel jLabel = new JLabel("Menu");
+
+        jLabel.setForeground(Color.WHITE);
+
         jLabel.setFont(new Font("Segoe UI", Font.BOLD, 200));
         jLabel.setUI(new javax.swing.plaf.basic.BasicLabelUI() {
             @Override
@@ -57,6 +60,8 @@ public class MainWindow {
         frame.add(showTelemetryButton);
         frame.add(Box.createVerticalStrut(20));
         frame.add(setVariablesButton);
+
+        frame.getContentPane().setBackground(Status.getBackGround());
 
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
