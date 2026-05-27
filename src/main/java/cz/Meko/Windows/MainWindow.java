@@ -21,6 +21,18 @@ public class MainWindow {
 
         JLabel jLabel = new JLabel("Menu");
         jLabel.setFont(new Font("Segoe UI", Font.BOLD, 200));
+        jLabel.setUI(new javax.swing.plaf.basic.BasicLabelUI() {
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2.setColor(c.getBackground());
+
+                super.paint(g2, c); // Paint the text over our custom background
+                g2.dispose();
+            }
+        });
         jLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 
@@ -45,6 +57,8 @@ public class MainWindow {
         frame.add(showTelemetryButton);
         frame.add(Box.createVerticalStrut(20));
         frame.add(setVariablesButton);
+
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         frame.setVisible(true);
     }

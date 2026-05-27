@@ -19,9 +19,9 @@ public class SetVariablesWindow {
 
         this.frame.setLayout(new BorderLayout(10, 0));
 
-        int rowHeight = 20;
+        int rowHeight = 25; // Slightly increased row height so rounded buttons fit nicely
 
-        JPanel listsPanel = new JPanel(new GridLayout(1, 3, 0, 0));
+        JPanel listsPanel = new JPanel(new GridLayout(1, 3, 10, 0)); // Added 10px horizontal gap so borders don't touch
 
         listsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -31,39 +31,31 @@ public class SetVariablesWindow {
         variables.setBackground(Status.getMiddle());
         variables.setFixedCellHeight(rowHeight);
 
-
-        //variables
-        JScrollPane listScroller = new JScrollPane(variables);
-        listScroller.setBorder(BorderFactory.createTitledBorder("Variables"));
-        listScroller.setBackground(Status.getForegroundColor());
-        listsPanel.add(listScroller);
-
-
-        JTextField[] textFieldsArray = new JTextField[setableVariableNames.length];
-
         // --- Text Field Panel ---
+        JTextField[] textFieldsArray = new JTextField[setableVariableNames.length];
         JPanel textFieldPanel = new JPanel();
         textFieldPanel.setLayout(new BoxLayout(textFieldPanel, BoxLayout.Y_AXIS));
         textFieldPanel.setBackground(Status.getMiddle());
 
         for (int i = 0; i < setableVariableNames.length; i++) {
             JTextField textField = new JTextField();
-            textField.setBackground(Status.getMiddle());
+
+            // FIX: Use a very light gray (almost white) so it's instantly recognizable as an input field
+            textField.setBackground(new Color(240, 240, 240));
+            textField.setForeground(Color.BLACK); // Dark text for perfect readability
+            textField.setCaretColor(Color.BLACK); // Dark cursor
+
+            // FIX: Outline the text field with the medium gray to frame it cleanly
+            javax.swing.border.Border line = new javax.swing.border.LineBorder(Status.getForegroundColor(), 1, true);
+            javax.swing.border.Border padding = BorderFactory.createEmptyBorder(0, 8, 0, 8);
+            textField.setBorder(BorderFactory.createCompoundBorder(line, padding));
 
             textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, rowHeight));
             textField.setPreferredSize(new Dimension(textField.getPreferredSize().width, rowHeight));
 
-            // 2. Save the created text field into our array at the current index
             textFieldsArray[i] = textField;
-
             textFieldPanel.add(textField);
         }
-
-        JScrollPane textFieldscrollPane = new JScrollPane(textFieldPanel);
-        textFieldscrollPane.setBorder(BorderFactory.createTitledBorder("values"));
-        textFieldscrollPane.setBackground(Status.getForegroundColor());
-        listsPanel.add(textFieldscrollPane);
-
 
         // --- Button Panel ---
         JPanel buttonPanel = new JPanel();
@@ -72,39 +64,63 @@ public class SetVariablesWindow {
 
         for (int i = 0; i < setableVariableNames.length; i++) {
             final String variableName = setableVariableNames[i];
-            final int index = i; // Save the current index for the button's action listener
+            final int index = i;
 
             JButton button = new JButton("Apply");
-            button.setBackground(Status.getMiddle());
+
+            // Apply the modern button styling from Status
+            Status.configureButton(button, 12);
+            // Adjust borders slightly so it fits in the list row
+            button.setBorder(BorderFactory.createEmptyBorder(2, 10, 2, 10));
 
             button.setMaximumSize(new Dimension(Integer.MAX_VALUE, rowHeight));
             button.setPreferredSize(new Dimension(button.getPreferredSize().width, rowHeight));
 
             button.addActionListener(e -> {
-                // 3. Grab the text from the matching text field using the index
                 String inputValue = textFieldsArray[index].getText();
 
                 System.out.println("Triggering update for: " + variableName + " with value: " + inputValue);
 
                 WTIO wtio = new WTIO();
 
-                // 4. Append the inputValue to the end of your URL string
                 switch (variableName) {
-                    case "Altitute" -> wtio.setAtribute("http://localhost:8111/editor/fm_commands?cmd=set" + "Alt" + "&value=" + inputValue);
-                    default -> wtio.setAtribute("http://localhost:8111/editor/fm_commands?cmd=set" + variableName + "&value=" + inputValue);
-
+                    case "Altitute" ->
+                            wtio.setAtribute("http://localhost:8111/editor/fm_commands?cmd=set" + "Alt" + "&value=" + inputValue);
+                    default ->
+                            wtio.setAtribute("http://localhost:8111/editor/fm_commands?cmd=set" + variableName + "&value=" + inputValue);
                 }
-
-
             });
 
             buttonPanel.add(button);
         }
-        JScrollPane buttonScrollPane = new JScrollPane(buttonPanel);
-        buttonScrollPane.setBorder(BorderFactory.createTitledBorder("Actions"));
-        buttonScrollPane.setBackground(Status.getForegroundColor());
-        listsPanel.add(buttonScrollPane);
 
+        // --- Create Scroll Panes ---
+        JScrollPane listScroller = new JScrollPane(variables);
+        JScrollPane textFieldscrollPane = new JScrollPane(textFieldPanel);
+        JScrollPane buttonScrollPane = new JScrollPane(buttonPanel);
+
+        // 1. Apply base configuration first
+        Status.configureJScrollPane(listScroller);
+        Status.configureJScrollPane(textFieldscrollPane);
+        Status.configureJScrollPane(buttonScrollPane);
+
+        // 2. Make transparent so rounded borders show correctly
+        listScroller.setOpaque(false);
+        listScroller.getViewport().setOpaque(false);
+        textFieldscrollPane.setOpaque(false);
+        textFieldscrollPane.getViewport().setOpaque(false);
+        buttonScrollPane.setOpaque(false);
+        buttonScrollPane.getViewport().setOpaque(false);
+
+        // 3. Apply custom rounded borders
+        listScroller.setBorder(Status.createRoundedTitledBorder("Variables"));
+        textFieldscrollPane.setBorder(Status.createRoundedTitledBorder("Values"));
+        buttonScrollPane.setBorder(Status.createRoundedTitledBorder("Actions"));
+
+        // Add to main panel
+        listsPanel.add(listScroller);
+        listsPanel.add(textFieldscrollPane);
+        listsPanel.add(buttonScrollPane);
 
         listsPanel.setBackground(Status.getBackGround());
         this.frame.add(listsPanel, BorderLayout.CENTER);
@@ -113,16 +129,6 @@ public class SetVariablesWindow {
     }
 
     private String[] getVariableNames() {
-        return new String[]{
-                "Altitude",
-                "Velocity",
-                "FuelMassRatio",
-                "Mass",
-                "CoolantOrHeadTemperature",
-                "OilTemperature",
-                "Temperature",
-                "Pressure",
-                "TimeSpeed"
-        };
+        return new String[]{"Altitude", "Velocity", "FuelMassRatio", "Mass", "CoolantOrHeadTemperature", "OilTemperature", "Temperature", "Pressure", "TimeSpeed"};
     }
 }

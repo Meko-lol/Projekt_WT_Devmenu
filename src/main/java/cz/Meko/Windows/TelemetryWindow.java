@@ -5,11 +5,7 @@ import cz.Meko.Data.Status;
 import cz.Meko.Data.UpdateTelemetry;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EtchedBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class TelemetryWindow {
     private final JFrame frame;
@@ -41,20 +37,6 @@ public class TelemetryWindow {
 
         buttonPanel.setBackground(Status.getBackGround());
 
-        settings.addActionListener(e -> {
-            new TelemetrySettingsWindow().init();
-        });
-
-        stopBtn.addActionListener(e -> {
-            Status.setUpdatingTelemetry(false);
-        });
-
-        startBtn.addActionListener(e -> {
-            UpdateTelemetry updateTelemetry = new UpdateTelemetry();
-            updateTelemetry.start();
-        });
-
-
         //Lists
         JPanel listsPanel = new JPanel(new GridLayout(1, 2, 0, 0));
 
@@ -70,30 +52,34 @@ public class TelemetryWindow {
         namesList.setBackground(Status.getMiddle());
         valuesList.setBackground(Status.getMiddle());
 
+        namesList.setUI(new javax.swing.plaf.basic.BasicListUI() {
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2.setColor(c.getBackground());
+
+                super.paint(g2, c); // Paint the text over our custom background
+                g2.dispose();
+            }
+        });
+
+        valuesList.setUI(new javax.swing.plaf.basic.BasicListUI() {
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2.setColor(c.getBackground());
+
+                super.paint(g2, c); // Paint the text over our custom background
+                g2.dispose();
+            }
+        });
+
         JScrollPane namesScrollPane = new JScrollPane(namesList);
         JScrollPane valuesScrollPane = new JScrollPane(valuesList);
-
-
-        BoundedRangeModel model = namesScrollPane.getVerticalScrollBar().getModel();
-        valuesScrollPane.getVerticalScrollBar().setModel(model);
-
-        namesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-
-        namesScrollPane.setBorder(BorderFactory.createTitledBorder("Variables"));
-        valuesScrollPane.setBorder(BorderFactory.createTitledBorder("Values"));
-
-
-        namesScrollPane.setBackground(Status.getForegroundColor());
-        valuesScrollPane.setBackground(Status.getForegroundColor());
-
-
-        listsPanel.add(namesScrollPane);
-        listsPanel.add(valuesScrollPane);
-
-        this.frame.add(buttonPanel, BorderLayout.NORTH);
-        this.frame.add(listsPanel, BorderLayout.CENTER);
-
-        listsPanel.setBackground(Status.getBackGround());
 
         Timer timer = new Timer(500, e -> {
             Data freshData = Status.getData();
@@ -117,10 +103,72 @@ public class TelemetryWindow {
                 valuesList.setListData(visibleValues.toArray(new String[0]));
             }
         });
-        timer.start();
+
+        settings.addActionListener(e -> {
+            new TelemetrySettingsWindow().init();
+        });
+
+        startBtn.addActionListener(e -> {
+            UpdateTelemetry updateTelemetry = new UpdateTelemetry();
+            updateTelemetry.start();
+            timer.start();
+        });
+
+        stopBtn.addActionListener(e -> {
+            Status.setUpdatingTelemetry(false);
+            timer.stop();
+        });
+
+
+        BoundedRangeModel model = namesScrollPane.getVerticalScrollBar().getModel();
+        valuesScrollPane.getVerticalScrollBar().setModel(model);
+
+        namesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+
+        namesScrollPane.setBorder(BorderFactory.createTitledBorder("Variables"));
+        valuesScrollPane.setBorder(BorderFactory.createTitledBorder("Values"));
+
+
+        namesScrollPane.setBackground(Status.getForegroundColor());
+        valuesScrollPane.setBackground(Status.getForegroundColor());
+
+        namesScrollPane.setUI(new javax.swing.plaf.basic.BasicScrollPaneUI() {
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2.setColor(c.getBackground());
+
+                super.paint(g2, c); // Paint the text over our custom background
+                g2.dispose();
+            }
+        });
+
+        valuesScrollPane.setUI(new javax.swing.plaf.basic.BasicScrollPaneUI() {
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2.setColor(c.getBackground());
+
+                super.paint(g2, c); // Paint the text over our custom background
+                g2.dispose();
+            }
+        });
+
+
+        listsPanel.add(namesScrollPane);
+        listsPanel.add(valuesScrollPane);
+
+        this.frame.add(buttonPanel, BorderLayout.NORTH);
+        this.frame.add(listsPanel, BorderLayout.CENTER);
+
+        listsPanel.setBackground(Status.getBackGround());
+
 
         this.frame.getContentPane().setBackground(Status.getBackGround());
-
         this.frame.setVisible(true);
     }
 }

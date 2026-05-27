@@ -41,9 +41,24 @@ public class TelemetrySettingsWindow {
 
             final int index = i;
 
+            Status.setToIndex(index, true);
+
             checkBox.addActionListener(e -> {
                 Status.setToIndex(index, checkBox.isSelected());
                 System.out.println(varNames[index] + " visibility set to: " + checkBox.isSelected());
+            });
+
+            checkBox.setUI(new javax.swing.plaf.basic.BasicCheckBoxUI() {
+                @Override
+                public void paint(Graphics g, JComponent c) {
+                    Graphics2D g2 = (Graphics2D) g.create();
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                    g2.setColor(c.getBackground());
+
+                    super.paint(g2, c); // Paint the text over our custom background
+                    g2.dispose();
+                }
             });
 
             checkBoxes[i] = checkBox;
@@ -57,6 +72,19 @@ public class TelemetrySettingsWindow {
         namesList.setBackground(Status.getMiddle());
         namesList.setFixedCellHeight(rowHeight);
 
+        namesList.setUI(new javax.swing.plaf.basic.BasicListUI() {
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2.setColor(c.getBackground());
+
+                super.paint(g2, c); // Paint the text over our custom background
+                g2.dispose();
+            }
+        });
+
         JScrollPane namesScrollPane = new JScrollPane(namesList);
         JScrollPane checkBoxScrollPane = new JScrollPane(checkBoxPanel);
 
@@ -65,11 +93,14 @@ public class TelemetrySettingsWindow {
 
         namesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
-        namesScrollPane.setBorder(BorderFactory.createTitledBorder("Variables"));
-        checkBoxScrollPane.setBorder(BorderFactory.createTitledBorder("Visibility"));
+        // 1. Apply your base scrollbar UI configuration
+        Status.configureJScrollPane(namesScrollPane);
+        Status.configureJScrollPane(checkBoxScrollPane);
 
-        namesScrollPane.setBackground(Status.getForegroundColor());
-        checkBoxScrollPane.setBackground(Status.getForegroundColor());
+
+        // 3. Apply the NEW custom rounded borders
+        namesScrollPane.setBorder(Status.createRoundedTitledBorder("Variables"));
+        checkBoxScrollPane.setBorder(Status.createRoundedTitledBorder("Visibility"));
 
         listsPanel.add(namesScrollPane);
         listsPanel.add(checkBoxScrollPane);
