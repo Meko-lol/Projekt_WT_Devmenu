@@ -2,78 +2,98 @@ package cz.Meko.Data;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+/**
+ * Handles network Input/Output (I/O) operations for the application.
+ * <p>
+ * This class is responsible for communicating with the local War Thunder web map API
+ * (typically hosted on localhost:8111). It provides methods to fetch live telemetry
+ * data and send fire-and-forget commands to alter game variables.
+ * </p>
+ */
 public class WTIO {
-    public void setAtribute(String targetUrl){
 
-
-        // 2. Open a basic connection to the URL
-        URL url = null;
-        try {
-            url = new URL(targetUrl);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+    /**
+     * Sends a "fire-and-forget" GET request to a specific URL to trigger an action or set a variable.
+     * <p>
+     * Because the target server often drops the connection or returns no data when receiving
+     * these control commands, this method intentionally uses short timeouts and suppresses
+     * the resulting {@link IOException}.
+     * </p>
+     *
+     * @param targetUrl The full URL string to send the GET request to.
+     */
+    public void setAtribute(String targetUrl) {
         HttpURLConnection connection = null;
+
         try {
+            // 1. Open a basic connection to the URL
+            URL url = new URL(targetUrl);
             connection = (HttpURLConnection) url.openConnection();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
-        // 3. Set the disguise and method
-        try {
+            // 2. Set the disguise and connection parameters
             connection.setRequestMethod("GET");
-        } catch (ProtocolException e) {
-            throw new RuntimeException(e);
-        }
-        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0");
-        connection.setConnectTimeout(1000); // Only wait 1 second to connect
-        connection.setReadTimeout(1000);    // Don't wait around for a response
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0");
+            connection.setConnectTimeout(1000); // Only wait 1 second to connect
+            connection.setReadTimeout(1000);    // Don't wait around for a response
 
-        // 4. Actually fire the request!
-        // We use getResponseCode(), but we wrap it in a try-catch so we can ignore the "no bytes" error
-        try {
+            // 3. Actually fire the request!
             connection.getResponseCode();
-        } catch (java.io.IOException e) {
-            // We expect this! The server drops the connection, so we do nothing here.
+            System.out.println("Fired command to: " + targetUrl);
+
+        } catch (IOException e) {
+            // We expect an IOException here! The server often drops the connection
+            // after receiving a command, so we fail silently.
+        } finally {
+            // 4. Clean up the connection
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
-
-        System.out.println("Fired command to: " + targetUrl);
-
-        // 5. Clean up the connection
-        connection.disconnect();
-
     }
 
+    /**
+     * Fetches the current live telemetry data from the game's local API.
+     * <p>
+     * Connects to {@code http://127.0.0.1:8111/indicators}, reads the JSON response,
+     * and maps it to a {@link Data} object using the Jackson {@link ObjectMapper}.
+     * </p>
+     *
+     * @return A populated {@link Data} object if the request is successful; {@code null} otherwise.
+     */
     public Data getTelemetry() {
+        HttpURLConnection connection = null;
+
         try {
+            // 1. Setup the connection to the indicators endpoint
             URL url = new URL("http://127.0.0.1:8111/indicators");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0");
 
+            // Setting a reasonable timeout so the UI doesn't freeze if the game is closed
+            connection.setConnectTimeout(2000);
+            connection.setReadTimeout(2000);
+
+            // 2. If the server responds with HTTP 200 (OK), parse the JSON
             if (connection.getResponseCode() == 200) {
                 ObjectMapper objectMapper = new ObjectMapper();
-                Data data = objectMapper.readValue(connection.getInputStream(), Data.class);
-                return data;
+                return objectMapper.readValue(connection.getInputStream(), Data.class);
             }
 
-
         } catch (IOException e) {
-            System.out.println("Data couldnt be loaded");
+            // Fails cleanly if the game is not running or the web map is disabled
+            System.out.println("Data couldn't be loaded (Game might be closed or API unreachable).");
+        } finally {
+            // 3. Clean up the connection
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
+
         return null;
     }
 }
